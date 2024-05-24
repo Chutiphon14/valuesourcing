@@ -90,17 +90,24 @@ define([
     let ita = myBaseURL + angsananewita.url;
     let itabold = myBaseURL + angsananewitabold.url;
 
-    const { lang = "th", list_inv = "" } = params;
+    const { lang = "th", list_inv = "", is_inv = "" } = params;
 
     log.debug("bodys", list_inv);
+    var decodedString = "";
+    var split_list_inv = [];
+    if (list_inv != "") {
+      decodedString = encode.convert({
+        string: list_inv,
+        inputEncoding: encode.Encoding.BASE_64,
+        outputEncoding: encode.Encoding.UTF_8,
+      });
 
-    var decodedString = encode.convert({
-      string: list_inv,
-      inputEncoding: encode.Encoding.BASE_64,
-      outputEncoding: encode.Encoding.UTF_8,
-    });
+      split_list_inv = decodedString.split(",");
+    } else {
+      log.debug("[is_inv]", [is_inv]);
+      split_list_inv = [is_inv];
+    }
 
-    const split_list_inv = decodedString.split(",");
     if (split_list_inv.length > 0) {
       split_list_inv.forEach((inv) => {
         log.debug("inv", inv);

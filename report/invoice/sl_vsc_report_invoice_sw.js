@@ -57,6 +57,10 @@ define([
       });
 
       if (subsidiaryId) {
+        customer.addSelectOption({
+          value: "",
+          text: "All Customer",
+        });
         const resultCustomer = searchCustomerBySubsidiry({ id: subsidiaryId });
         resultCustomer.forEach((element) => {
           customer.addSelectOption({
@@ -140,6 +144,7 @@ define([
       }
 
       let resultInvoice = searchInvoice(filter_invoice);
+      log.debug("🚀 ~ onRequest ~ resultInvoice:", resultInvoice);
 
       resultInvoice.forEach((element) => {
         invoice.addSelectOption({
@@ -160,6 +165,7 @@ define([
 
   function searchInvoice(obj) {
     try {
+      log.debug("obj", obj);
       var customrecord_search_obj = search.create({
         type: "invoice",
         filters: obj,

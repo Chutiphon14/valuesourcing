@@ -113,7 +113,7 @@ define([
 
       var myString = rec.getValue("invoice_field").toString();
 
-      var encodedString = encodeURIComponent(myString).replace(
+      var encodedString = encodeURIComponent(myString || myItems).replace(
         /%([0-9A-F]{2})/g,
         function (match, p1) {
           return String.fromCharCode(parseInt(p1, 16));
@@ -136,6 +136,21 @@ define([
     }
   }
 
+  function printReportInvoice(item) {
+    try {
+      let params = {};
+      let scriptId = {
+        scriptId: "customscript_sl_vsc_webpage_report_inv",
+        deploymentId: "customdeploy_sl_vsc_webpage_report_inv",
+      };
+      let url = getSuiteletUrl(scriptId, params);
+
+      window.open(url + `is_inv=${item}&`, "_blank");
+    } catch (error) {
+      console.log("🚀 ~ printReportInvoice ~ error:", error);
+    }
+  }
+
   function base64Encode(string) {
     var encodedString = btoa(string);
     return encodedString;
@@ -153,5 +168,6 @@ define([
     // validateLine: validateLine,
     // sublistChanged: sublistChanged,
     printReport,
+    printReportInvoice,
   };
 });
