@@ -15,3 +15,5 @@
 3.3 >> role Custom Developer > save
 
 (จะได้รับ TOKEN ID ไปใส่ที่ netSuiteUpload.netSuiteKey และ TOKEN SECRET ไปใส่ที่ netSuiteUpload.netSuiteSecret)
+
+https://vscode.dev/profile/github/ef9050947bf601839e6ad31c9d8f4339
