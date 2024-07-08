@@ -46,6 +46,8 @@ define([
 
       if (subsidiaryId) {
         subsidiary.defaultValue = subsidiaryId;
+      }else{
+        subsidiary.defaultValue = 2
       }
 
       var customer = form.addField({

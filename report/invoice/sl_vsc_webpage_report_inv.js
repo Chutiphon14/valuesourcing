@@ -176,11 +176,23 @@ define([
           "custrecord_inpth_taxlegalname"
         );
 
+        const include_state = ["กรุงเทพมหานคร", "กรุงเทพ"];
+
         jsonXML.address_tax = `${taxBranchNumberRecord.getValue(
           "custrecord_inpth_address1"
-        )} แขวง${taxBranchNumberRecord.getValue(
-          "custrecord_inpth_address2"
-        )} อำเภอ${taxBranchNumberRecord.getValue(
+        )} ${
+          include_state.includes(
+            taxBranchNumberRecord.getValue("custrecord_inpth_state")
+          )
+            ? "แขวง"
+            : "ตำบล"
+        }${taxBranchNumberRecord.getValue("custrecord_inpth_address2")} ${
+          include_state.includes(
+            taxBranchNumberRecord.getValue("custrecord_inpth_state")
+          )
+            ? "เขต"
+            : "อำเภอ"
+        }${taxBranchNumberRecord.getValue(
           "custrecord_inpth_city"
         )} จังหวัด${taxBranchNumberRecord.getValue(
           "custrecord_inpth_state"
@@ -197,11 +209,9 @@ define([
         );
 
         if (invoiceRecord.getValue("custbody_inpth_actual_customer_name")) {
-          jsonXML.customernumber = invoiceRecord.getValue(
-            "custbody_inpth_actual_customer_name"
-          );
+          jsonXML.customernumber = invoiceRecord.getValue("entityid");
         } else {
-          jsonXML.customernumber = customerRecord.getValue("altname");
+          jsonXML.customernumber = customerRecord.getValue("entityid");
         }
 
         if (invoiceRecord.getValue("custbody_inpth_actual_customer_name")) {
@@ -269,6 +279,7 @@ define([
         jsonXML.customer_shiptoselect = invoiceRecord.getValue(
           "custbody_rpt_shiptoselect"
         );
+        jsonXML.customer_duedate = invoiceRecord.getText("duedate");
 
         const lineItem = invoiceRecord.getLineCount({ sublistId: "item" });
 
@@ -312,7 +323,7 @@ define([
           jsonXML.gross_amount += parseFloat(
             invoiceRecord.getSublistText({
               sublistId: "item",
-              fieldId: "grossamt",
+              fieldId: "amount",
               line: index,
             })
           );
@@ -324,13 +335,35 @@ define([
               line: index,
             })
           );
+
+          if (!jsonXML.vat_rate) {
+            jsonXML.vat_rate = invoiceRecord.getSublistValue({
+              sublistId: "item",
+              fieldId: "taxrate1",
+              line: index,
+            });
+          }
         }
 
         jsonXML.after_discount = jsonXML.gross_amount - jsonXML.less_discount;
         jsonXML.total = jsonXML.after_discount + jsonXML.vat;
 
+        jsonXML.gross_amount = formatNumberWithoutToLocaleString(
+          jsonXML.gross_amount
+        );
+        jsonXML.less_discount = formatNumberWithoutToLocaleString(
+          jsonXML.less_discount
+        );
+        jsonXML.after_discount = formatNumberWithoutToLocaleString(
+          jsonXML.after_discount
+        );
+        jsonXML.vat = formatNumberWithoutToLocaleString(jsonXML.vat);
+        jsonXML.total = formatNumberWithoutToLocaleString(jsonXML.total);
+
         jsonXML.remark = invoiceRecord.getText("custbody_vsc_ar_inv_remark");
-        jsonXML.total_text = BAHTTEXT(jsonXML.total);
+        jsonXML.total_text = BAHTTEXT(jsonXML.gross_amount);
+
+        // jsonXML.vat_rate = formatNumber(jsonXML.vat_rate);
 
         list_jsonXML.push(jsonXML);
       });
@@ -564,14 +597,14 @@ define([
           "AND",
           ["type", "anyof", "CustInvc"],
         ],
-        columns: [
-          "internalid",
-          ["internalid", "anyof", "12643"],
-          "AND",
-          ["mainline", "is", "T"],
-          "AND",
-          ["type", "anyof", "CustInvc"],
-        ],
+        // columns: [
+        //   "internalid",
+        //   ["internalid", "anyof", "12643"],
+        //   "AND",
+        //   ["mainline", "is", "T"],
+        //   "AND",
+        //   ["type", "anyof", "CustInvc"],
+        // ],
         columns: [
           "internalid",
           search.createColumn({ name: "tranid", label: "Document Number" }),
@@ -724,6 +757,46 @@ define([
           return text + suffix;
         }
       }
+    }
+  }
+
+  function formatNumberWithoutToLocaleString(number) {
+    // แยกเลขจำนวนด้วย comma
+    let numberReturn = 0;
+    log.debug("number", number);
+
+    var parts = number.toString().split(".");
+    log.debug("parts", parts);
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    // // เพิ่มจุดทศนิยมถ้ามี
+    // if (parts.length === 1) {
+    //   parts.push("00"); // ถ้าไม่มีจุดทศนิยมให้เพิ่ม .00
+    // } else if (parts[1].length === 1) {
+    //   parts[1] += "0"; // ถ้ามีจุดทศนิยมแค่หลักเดียวให้เพิ่ม 0 ที่หลักทศนิยมสอง
+    // }
+
+    // สร้างทศนิยมเพียง 2 ตำแหน่ง
+    if (parts.length === 1) {
+      parts.push("00"); // ถ้าไม่มีจุดทศนิยมให้เพิ่ม .00
+    } else {
+      parts[1] =
+        parts[1].length > 1 ? parts[1].substring(0, 2) : parts[1] + "0"; // ถ้ามีทศนิยมแค่หลักเดียวให้เพิ่ม 0 ที่หลักทศนิยมสอง
+    }
+
+    numberReturn = parts.join(".");
+
+    return numberReturn;
+  }
+
+  function formatNumber(num) {
+    // ตรวจสอบค่าตัวเลข
+    if (num % 1 === 0) {
+      // ถ้าตัวเลขเป็นจำนวนเต็ม ให้แสดงเฉพาะเลขหลักเดียว
+      return num.toString();
+    } else {
+      // ถ้าตัวเลขมีทศนิยม ให้แสดงทศนิยมด้วย
+      return num.toString();
     }
   }
 

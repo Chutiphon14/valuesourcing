@@ -297,7 +297,7 @@ define([
           jsonXML.gross_amount += parseFloat(
             invoiceRecord.getSublistText({
               sublistId: "item",
-              fieldId: "grossamt",
+              fieldId: "amount",
               line: index,
             })
           );
@@ -314,8 +314,20 @@ define([
         jsonXML.after_discount = jsonXML.gross_amount - jsonXML.less_discount;
         jsonXML.total = jsonXML.after_discount + jsonXML.vat;
 
+        jsonXML.gross_amount = formatNumberWithoutToLocaleString(
+          jsonXML.gross_amount
+        );
+        jsonXML.less_discount = formatNumberWithoutToLocaleString(
+          jsonXML.less_discount
+        );
+        jsonXML.after_discount = formatNumberWithoutToLocaleString(
+          jsonXML.after_discount
+        );
+        jsonXML.vat = formatNumberWithoutToLocaleString(jsonXML.vat);
+        jsonXML.total = formatNumberWithoutToLocaleString(jsonXML.total);
+
         jsonXML.remark = invoiceRecord.getText("custbody_vsc_ar_inv_remark");
-        jsonXML.total_text = BAHTTEXT(jsonXML.total);
+        jsonXML.total_text = BAHTTEXT(jsonXML.gross_amount);
 
         list_jsonXML.push(jsonXML);
       });
@@ -549,14 +561,14 @@ define([
           "AND",
           ["type", "anyof", "CustInvc"],
         ],
-        columns: [
-          "internalid",
-          ["internalid", "anyof", "12643"],
-          "AND",
-          ["mainline", "is", "T"],
-          "AND",
-          ["type", "anyof", "CustInvc"],
-        ],
+        // columns: [
+        //   "internalid",
+        //   ["internalid", "anyof", "12643"],
+        //   "AND",
+        //   ["mainline", "is", "T"],
+        //   "AND",
+        //   ["type", "anyof", "CustInvc"],
+        // ],
         columns: [
           "internalid",
           search.createColumn({ name: "tranid", label: "Document Number" }),
