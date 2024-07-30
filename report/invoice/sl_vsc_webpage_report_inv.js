@@ -24,386 +24,392 @@ define([
   runtime
 ) {
   function onRequest(context) {
-    // try {
-    let request = context.request;
-    let response = context.response;
-    let params = request.parameters;
-    let bodys = request.body;
+    try {
+      let request = context.request;
+      let response = context.response;
+      let params = request.parameters;
+      let bodys = request.body;
 
-    let list_copy = [
-      {
-        text: "ใบแจ้งหนี้",
-        class: "box1",
-        form: "ต้นฉบับ (สำหรับลูกค้า)",
-      },
-      {
-        text: "ใบกำกับสินค้า/<br/>ใบกำกับภาษี",
-        class: "boxs",
-        form: "ต้นฉบับ (สำหรับลูกค้า)",
-      },
-      {
-        text: "ใบกำกับสินค้า/<br/>ใบกำกับภาษี",
-        class: "boxs",
-        form: "สำเนา (สำหรับลูกค้า)",
-      },
-      {
-        text: "ใบเสร็จรับเงิน",
-        class: "boxs",
-        form: "ต้นฉบับ (ไม่ใช่ใบกำกับภาษี) ",
-      },
-      {
-        text: "ใบเสร็จรับเงิน",
-        class: "boxs",
-        form: "สำเนา (ไม่ใช่ใบกำกับภาษี)",
-      },
-    ];
-    let list_jsonXML = [];
-    // F1EF99
-    // E8EFCF
-    var instanceId = runtime.accountId;
-    const instance_url = instanceId.toLowerCase().replace("_", "-");
+      let list_copy = [
+        {
+          text: "ใบแจ้งหนี้",
+          class: "box1",
+          form: "ต้นฉบับ (สำหรับลูกค้า)",
+        },
+        {
+          text: "ใบกำกับสินค้า/<br/>ใบกำกับภาษี",
+          class: "boxs",
+          form: "ต้นฉบับ (สำหรับลูกค้า)",
+        },
+        {
+          text: "ใบกำกับสินค้า/<br/>ใบกำกับภาษี",
+          class: "boxs",
+          form: "สำเนา (สำหรับลูกค้า)",
+        },
+        {
+          text: "ใบเสร็จรับเงิน",
+          class: "boxs",
+          form: "ต้นฉบับ (ไม่ใช่ใบกำกับภาษี) ",
+        },
+        {
+          text: "ใบเสร็จรับเงิน",
+          class: "boxs",
+          form: "สำเนา (ไม่ใช่ใบกำกับภาษี)",
+        },
+      ];
+      let list_jsonXML = [];
+      // F1EF99
+      // E8EFCF
+      var instanceId = runtime.accountId;
+      const instance_url = instanceId.toLowerCase().replace("_", "-");
 
-    let scheme = "https://";
-    let host = url.resolveDomain({
-      hostType: url.HostType.APPLICATION,
-    });
-    let myBaseURL = scheme + host;
+      let scheme = "https://";
+      let host = url.resolveDomain({
+        hostType: url.HostType.APPLICATION,
+      });
+      let myBaseURL = scheme + host;
 
-    let angsananew = file.load({
-      id: "../../fonts/Angsana New V1 V2.ttf",
-    });
-    // log.debug('tahomafont', tahomafont);
-    let angsananewbold = file.load({
-      id: "../../fonts/angsab.ttf",
-    });
-
-    let angsananewita = file.load({
-      id: "../../fonts/ANGSAI.ttf",
-    });
-    // log.debug('tahomafont', tahomafont);
-    let angsananewitabold = file.load({
-      id: "../../fonts/AngsanaNewBoldItalic.ttf",
-    });
-
-    let normal = myBaseURL + angsananew.url;
-    let bold = myBaseURL + angsananewbold.url;
-    let ita = myBaseURL + angsananewita.url;
-    let itabold = myBaseURL + angsananewitabold.url;
-
-    const { lang = "th", list_inv = "", is_inv = "" } = params;
-
-    log.debug("bodys", list_inv);
-    var decodedString = "";
-    var split_list_inv = [];
-    if (list_inv != "") {
-      decodedString = encode.convert({
-        string: list_inv,
-        inputEncoding: encode.Encoding.BASE_64,
-        outputEncoding: encode.Encoding.UTF_8,
+      let angsananew = file.load({
+        id: "../../fonts/Angsana New V1 V2.ttf",
+      });
+      // log.debug('tahomafont', tahomafont);
+      let angsananewbold = file.load({
+        id: "../../fonts/angsab.ttf",
       });
 
-      split_list_inv = decodedString.split(",");
-    } else {
-      log.debug("[is_inv]", [is_inv]);
-      split_list_inv = [is_inv];
-    }
+      let angsananewita = file.load({
+        id: "../../fonts/ANGSAI.ttf",
+      });
+      // log.debug('tahomafont', tahomafont);
+      let angsananewitabold = file.load({
+        id: "../../fonts/AngsanaNewBoldItalic.ttf",
+      });
 
-    if (split_list_inv.length > 0) {
-      split_list_inv.forEach((inv) => {
-        log.debug("inv", inv);
+      let normal = myBaseURL + angsananew.url;
+      let bold = myBaseURL + angsananewbold.url;
+      let ita = myBaseURL + angsananewita.url;
+      let itabold = myBaseURL + angsananewitabold.url;
 
-        let jsonXML = {
-          item: [],
-          gross_amount: 0,
-          less_discount: 0,
-          after_discount: 0,
-          vat: 0,
-          total: 0,
-        };
+      const { lang = "th", list_inv = "", is_inv = "" } = params;
 
-        const invoiceRecord = record.load({
-          type: "invoice",
-          id: inv,
-          isDynamic: true,
+      log.debug("bodys", list_inv);
+      var decodedString = "";
+      var split_list_inv = [];
+      if (list_inv != "") {
+        decodedString = encode.convert({
+          string: list_inv,
+          inputEncoding: encode.Encoding.BASE_64,
+          outputEncoding: encode.Encoding.UTF_8,
         });
 
-        const resultInvoiceBillAddress = searchInvoiceBillAddress({
-          id: inv,
-        });
+        split_list_inv = decodedString.split(",");
+      } else {
+        log.debug("[is_inv]", [is_inv]);
+        split_list_inv = [is_inv];
+      }
 
-        const subsidiaryRecord = record.load({
-          type: "subsidiary",
-          id: invoiceRecord.getValue("subsidiary"),
-          isDynamic: true,
-        });
+      if (split_list_inv.length > 0) {
+        split_list_inv.forEach((inv) => {
+          log.debug("inv", inv);
 
-        const termRecord = record.load({
-          type: "term",
-          id: invoiceRecord.getValue("terms"),
-          isDynamic: true,
-        });
+          let jsonXML = {
+            item: [],
+            gross_amount: 0,
+            less_discount: 0,
+            after_discount: 0,
+            vat: 0,
+            total: 0,
+          };
 
-        const taxBranchNumberRecord = record.load({
-          type: "customrecord_csegtaxbranch",
-          id: invoiceRecord.getValue("csegtaxbranch") || "404",
-          isDynamic: true,
-        });
-
-        const customerRecord = record.load({
-          type: "customer",
-          id: invoiceRecord.getValue("entity"),
-          isDynamic: true,
-        });
-
-        const resultCustomerAddress = searchCustomerAddress({
-          id: invoiceRecord.getValue("entity"),
-        });
-
-        const imageId = subsidiaryRecord.getValue("logo");
-
-        if (imageId.length > 0) {
-          var fileObj = file.load({
-            id: imageId,
+          const invoiceRecord = record.load({
+            type: "invoice",
+            id: inv,
+            isDynamic: true,
           });
 
-          jsonXML.logo =
-            `https://${instance_url}.app.netsuite.com` + fileObj.url;
-        } else {
-          jsonXML.logo = "";
-        }
-
-        jsonXML.legalname = taxBranchNumberRecord.getValue(
-          "custrecord_inpth_taxlegalname"
-        );
-
-        const include_state = ["กรุงเทพมหานคร", "กรุงเทพ"];
-
-        jsonXML.address_tax = `${taxBranchNumberRecord.getValue(
-          "custrecord_inpth_address1"
-        )} ${
-          include_state.includes(
-            taxBranchNumberRecord.getValue("custrecord_inpth_state")
-          )
-            ? "แขวง"
-            : "ตำบล"
-        }${taxBranchNumberRecord.getValue("custrecord_inpth_address2")} ${
-          include_state.includes(
-            taxBranchNumberRecord.getValue("custrecord_inpth_state")
-          )
-            ? "เขต"
-            : "อำเภอ"
-        }${taxBranchNumberRecord.getValue(
-          "custrecord_inpth_city"
-        )} จังหวัด${taxBranchNumberRecord.getValue(
-          "custrecord_inpth_state"
-        )} ${taxBranchNumberRecord.getValue("custrecord_inpth_zip")}`;
-        jsonXML.phone = taxBranchNumberRecord.getValue("custrecord_inpth_tel");
-        jsonXML.email = taxBranchNumberRecord.getValue(
-          "custrecordcustrecord_inpth_email"
-        );
-        jsonXML.taxid = taxBranchNumberRecord.getValue(
-          "custrecord_inpth_taxid"
-        );
-        jsonXML.branchcode = taxBranchNumberRecord.getValue(
-          "custrecord_inpth_branchcode"
-        );
-
-        if (invoiceRecord.getValue("custbody_inpth_actual_customer_name")) {
-          jsonXML.customernumber = invoiceRecord.getValue("entityid");
-        } else {
-          jsonXML.customernumber = customerRecord.getValue("entityid");
-        }
-
-        if (invoiceRecord.getValue("custbody_inpth_actual_customer_name")) {
-          jsonXML.customercompany = invoiceRecord.getValue(
-            "custbody_inpth_actual_customer_name"
-          );
-        } else {
-          jsonXML.customercompany = customerRecord.getValue("companyname");
-        }
-
-        if (
-          invoiceRecord.getValue("custbody_inpth_customer_address1") &&
-          invoiceRecord.getValue("custbody_inpth_customer_address2") &&
-          invoiceRecord.getValue("custbody_inpth_zip_code")
-        ) {
-          jsonXML.customer_address = `${invoiceRecord.getValue(
-            "custbody_inpth_customer_address1"
-          )} ${invoiceRecord.getValue(
-            "custbody_inpth_customer_address2"
-          )} ${invoiceRecord.getValue("custbody_inpth_zip_code")}`;
-        } else {
-          jsonXML.customer_address = resultInvoiceBillAddress[0]?.address;
-        }
-
-        jsonXML.customer_phone = customerRecord.getValue("phone");
-        jsonXML.customer_fax = customerRecord.getValue("fax");
-
-        if (invoiceRecord.getValue("custbody_inpth_acutal_customer_id")) {
-          jsonXML.customer_taxid = invoiceRecord.getValue(
-            "custbody_inpth_acutal_customer_id"
-          );
-        } else {
-          jsonXML.customer_taxid = invoiceRecord.getValue("vatregnum");
-        }
-
-        if (invoiceRecord.getValue("custbody_inpth_tax_branch_hq")) {
-          jsonXML.customer_head = true;
-          jsonXML.customer_head_name = invoiceRecord.getValue(
-            "custbody_inpth_tax_branch_hq"
-          );
-        } else if (invoiceRecord.getValue("custbody_inpth_tax_branch_number")) {
-          jsonXML.customer_head = false;
-          jsonXML.customer_head_name = invoiceRecord.getValue(
-            "custbody_inpth_tax_branch_number"
-          );
-        } else {
-          jsonXML.customer_head = false;
-          jsonXML.customer_head_name = resultCustomerAddress[0]?.addressee;
-        }
-
-        jsonXML.customer_po = invoiceRecord.getText("otherrefnum");
-        jsonXML.customer_inv = invoiceRecord.getValue("tranid");
-        jsonXML.customer_date = invoiceRecord.getText("trandate");
-        jsonXML.customer_day_term = termRecord.getValue("daysuntilnetdue");
-
-        var salesOrder = invoiceRecord.getText("createdfrom");
-        var parts = salesOrder.split("#");
-        if (parts.length > 0) {
-          jsonXML.customer_createdfrom = parts[1];
-        } else {
-          jsonXML.customer_createdfrom = invoiceRecord.getText("createdfrom");
-        }
-
-        jsonXML.customer_salesrep = invoiceRecord.getText("salesrep");
-        jsonXML.customer_shiptoselect = invoiceRecord.getValue(
-          "custbody_rpt_shiptoselect"
-        );
-        jsonXML.customer_duedate = invoiceRecord.getText("duedate");
-
-        const lineItem = invoiceRecord.getLineCount({ sublistId: "item" });
-
-        for (let index = 0; index < lineItem; index++) {
-          log.debug(
-            "getLineCount",
-            invoiceRecord.getSublistText({
-              sublistId: "item",
-              fieldId: "item",
-              line: index,
-            })
-          );
-          jsonXML.item.push({
-            description: invoiceRecord.getSublistText({
-              sublistId: "item",
-              fieldId: "item",
-              line: index,
-            }),
-            quantity: `${invoiceRecord.getSublistValue({
-              sublistId: "item",
-              fieldId: "quantity",
-              line: index,
-            })} ${invoiceRecord.getSublistText({
-              sublistId: "item",
-              fieldId: "units",
-              line: index,
-            })}`,
-            rate: invoiceRecord.getSublistText({
-              sublistId: "item",
-              fieldId: "rate",
-              line: index,
-            }),
-            discount: "",
-            amount: invoiceRecord.getSublistText({
-              sublistId: "item",
-              fieldId: "amount",
-              line: index,
-            }),
+          const resultInvoiceBillAddress = searchInvoiceBillAddress({
+            id: inv,
           });
 
-          jsonXML.gross_amount += parseFloat(
-            invoiceRecord.getSublistText({
-              sublistId: "item",
-              fieldId: "amount",
-              line: index,
-            })
-          );
+          const subsidiaryRecord = record.load({
+            type: "subsidiary",
+            id: invoiceRecord.getValue("subsidiary"),
+            isDynamic: true,
+          });
 
-          jsonXML.vat += parseFloat(
-            invoiceRecord.getSublistText({
-              sublistId: "item",
-              fieldId: "tax1amt",
-              line: index,
-            })
-          );
+          const termRecord = record.load({
+            type: "term",
+            id: invoiceRecord.getValue("terms"),
+            isDynamic: true,
+          });
 
-          if (!jsonXML.vat_rate) {
-            jsonXML.vat_rate = invoiceRecord.getSublistValue({
-              sublistId: "item",
-              fieldId: "taxrate1",
-              line: index,
+          const taxBranchNumberRecord = record.load({
+            type: "customrecord_csegtaxbranch",
+            id: invoiceRecord.getValue("csegtaxbranch") || "404",
+            isDynamic: true,
+          }) || '';
+
+          const customerRecord = record.load({
+            type: "customer",
+            id: invoiceRecord.getValue("entity"),
+            isDynamic: true,
+          });
+
+          const resultCustomerAddress = searchCustomerAddress({
+            id: invoiceRecord.getValue("entity"),
+          });
+
+          const imageId = subsidiaryRecord.getValue("logo");
+
+          if (imageId.length > 0) {
+            var fileObj = file.load({
+              id: imageId,
             });
+
+            jsonXML.logo =
+              `https://${instance_url}.app.netsuite.com` + fileObj.url;
+          } else {
+            jsonXML.logo = "";
           }
-        }
 
-        jsonXML.after_discount = jsonXML.gross_amount - jsonXML.less_discount;
-        jsonXML.total = jsonXML.after_discount + jsonXML.vat;
+          if (taxBranchNumberRecord || "") {
+            jsonXML.legalname = taxBranchNumberRecord.getValue(
+              "custrecord_inpth_taxlegalname"
+            );
 
-        jsonXML.gross_amount = formatNumberWithoutToLocaleString(
-          jsonXML.gross_amount
-        );
-        jsonXML.less_discount = formatNumberWithoutToLocaleString(
-          jsonXML.less_discount
-        );
-        jsonXML.after_discount = formatNumberWithoutToLocaleString(
-          jsonXML.after_discount
-        );
-        jsonXML.vat = formatNumberWithoutToLocaleString(jsonXML.vat);
-        jsonXML.total = formatNumberWithoutToLocaleString(jsonXML.total);
+            const include_state = ["กรุงเทพมหานคร", "กรุงเทพ"];
 
-        jsonXML.remark = invoiceRecord.getText("custbody_vsc_ar_inv_remark");
-        jsonXML.total_text = BAHTTEXT(jsonXML.gross_amount);
+            jsonXML.address_tax = `${taxBranchNumberRecord.getValue(
+              "custrecord_inpth_address1"
+            )} ${
+              include_state.includes(
+                taxBranchNumberRecord.getValue("custrecord_inpth_state")
+              )
+                ? "แขวง"
+                : "ตำบล"
+            }${taxBranchNumberRecord.getValue("custrecord_inpth_address2")} ${
+              include_state.includes(
+                taxBranchNumberRecord.getValue("custrecord_inpth_state")
+              )
+                ? "เขต"
+                : "อำเภอ"
+            }${taxBranchNumberRecord.getValue(
+              "custrecord_inpth_city"
+            )} จังหวัด${taxBranchNumberRecord.getValue(
+              "custrecord_inpth_state"
+            )} ${taxBranchNumberRecord.getValue("custrecord_inpth_zip")}`;
+            jsonXML.phone = taxBranchNumberRecord.getValue(
+              "custrecord_inpth_tel"
+            );
+            jsonXML.email = taxBranchNumberRecord.getValue(
+              "custrecordcustrecord_inpth_email"
+            );
+            jsonXML.taxid = taxBranchNumberRecord.getValue(
+              "custrecord_inpth_taxid"
+            );
+            jsonXML.branchcode = taxBranchNumberRecord.getValue(
+              "custrecord_inpth_branchcode"
+            );
+          }
 
-        // jsonXML.vat_rate = formatNumber(jsonXML.vat_rate);
+          if (invoiceRecord.getValue("custbody_inpth_actual_customer_name")) {
+            jsonXML.customernumber = invoiceRecord.getValue("entityid");
+          } else {
+            jsonXML.customernumber = customerRecord.getValue("entityid");
+          }
 
-        list_jsonXML.push(jsonXML);
+          if (invoiceRecord.getValue("custbody_inpth_actual_customer_name")) {
+            jsonXML.customercompany = invoiceRecord.getValue(
+              "custbody_inpth_actual_customer_name"
+            );
+          } else {
+            jsonXML.customercompany = customerRecord.getValue("companyname");
+          }
+
+          if (
+            invoiceRecord.getValue("custbody_inpth_customer_address1") &&
+            invoiceRecord.getValue("custbody_inpth_customer_address2") &&
+            invoiceRecord.getValue("custbody_inpth_zip_code")
+          ) {
+            jsonXML.customer_address = `${invoiceRecord.getValue(
+              "custbody_inpth_customer_address1"
+            )} ${invoiceRecord.getValue(
+              "custbody_inpth_customer_address2"
+            )} ${invoiceRecord.getValue("custbody_inpth_zip_code")}`;
+          } else {
+            jsonXML.customer_address = resultInvoiceBillAddress[0]?.address;
+          }
+
+          jsonXML.customer_phone = customerRecord.getValue("phone");
+          jsonXML.customer_fax = customerRecord.getValue("fax");
+
+          if (invoiceRecord.getValue("custbody_inpth_acutal_customer_id")) {
+            jsonXML.customer_taxid = invoiceRecord.getValue(
+              "custbody_inpth_acutal_customer_id"
+            );
+          } else {
+            jsonXML.customer_taxid = invoiceRecord.getValue("vatregnum");
+          }
+
+          if (invoiceRecord.getValue("custbody_inpth_tax_branch_hq")) {
+            jsonXML.customer_head = true;
+            jsonXML.customer_head_name = invoiceRecord.getValue(
+              "custbody_inpth_tax_branch_hq"
+            );
+          } else if (
+            invoiceRecord.getValue("custbody_inpth_tax_branch_number")
+          ) {
+            jsonXML.customer_head = false;
+            jsonXML.customer_head_name = invoiceRecord.getValue(
+              "custbody_inpth_tax_branch_number"
+            );
+          } else {
+            jsonXML.customer_head = false;
+            jsonXML.customer_head_name = resultCustomerAddress[0]?.addressee;
+          }
+
+          jsonXML.customer_po = invoiceRecord.getText("otherrefnum");
+          jsonXML.customer_inv = invoiceRecord.getValue("tranid");
+          jsonXML.customer_date = invoiceRecord.getText("trandate");
+          jsonXML.customer_day_term = termRecord.getValue("daysuntilnetdue");
+
+          var salesOrder = invoiceRecord.getText("createdfrom");
+          var parts = salesOrder.split("#");
+          if (parts.length > 0) {
+            jsonXML.customer_createdfrom = parts[1];
+          } else {
+            jsonXML.customer_createdfrom = invoiceRecord.getText("createdfrom");
+          }
+
+          jsonXML.customer_salesrep = invoiceRecord.getText("salesrep");
+          jsonXML.customer_shiptoselect = invoiceRecord.getValue(
+            "custbody_rpt_shiptoselect"
+          );
+          jsonXML.customer_duedate = invoiceRecord.getText("duedate");
+
+          const lineItem = invoiceRecord.getLineCount({ sublistId: "item" });
+
+          for (let index = 0; index < lineItem; index++) {
+            log.debug(
+              "getLineCount",
+              invoiceRecord.getSublistText({
+                sublistId: "item",
+                fieldId: "item",
+                line: index,
+              })
+            );
+            jsonXML.item.push({
+              description: invoiceRecord.getSublistText({
+                sublistId: "item",
+                fieldId: "item",
+                line: index,
+              }),
+              quantity: `${invoiceRecord.getSublistValue({
+                sublistId: "item",
+                fieldId: "quantity",
+                line: index,
+              })} ${invoiceRecord.getSublistText({
+                sublistId: "item",
+                fieldId: "units",
+                line: index,
+              })}`,
+              rate: invoiceRecord.getSublistText({
+                sublistId: "item",
+                fieldId: "rate",
+                line: index,
+              }),
+              discount: "",
+              amount: invoiceRecord.getSublistText({
+                sublistId: "item",
+                fieldId: "amount",
+                line: index,
+              }),
+            });
+
+            jsonXML.gross_amount += parseFloat(
+              invoiceRecord.getSublistText({
+                sublistId: "item",
+                fieldId: "amount",
+                line: index,
+              })
+            );
+
+            jsonXML.vat += parseFloat(
+              invoiceRecord.getSublistText({
+                sublistId: "item",
+                fieldId: "tax1amt",
+                line: index,
+              })
+            );
+
+            if (!jsonXML.vat_rate) {
+              jsonXML.vat_rate = invoiceRecord.getSublistValue({
+                sublistId: "item",
+                fieldId: "taxrate1",
+                line: index,
+              });
+            }
+          }
+
+          jsonXML.after_discount = jsonXML.gross_amount - jsonXML.less_discount;
+          jsonXML.total = jsonXML.after_discount + jsonXML.vat;
+
+          jsonXML.gross_amount = formatNumberWithoutToLocaleString(
+            jsonXML.gross_amount
+          );
+          jsonXML.less_discount = formatNumberWithoutToLocaleString(
+            jsonXML.less_discount
+          );
+          jsonXML.after_discount = formatNumberWithoutToLocaleString(
+            jsonXML.after_discount
+          );
+          jsonXML.vat = formatNumberWithoutToLocaleString(jsonXML.vat);
+          jsonXML.total = formatNumberWithoutToLocaleString(jsonXML.total);
+
+          jsonXML.remark = invoiceRecord.getText("custbody_vsc_ar_inv_remark");
+          jsonXML.total_text = BAHTTEXT(jsonXML.gross_amount);
+
+          // jsonXML.vat_rate = formatNumber(jsonXML.vat_rate);
+
+          list_jsonXML.push(jsonXML);
+        });
+      }
+
+      // log.debug("jsonXML", jsonXML);
+
+      log.debug("list_jsonXML", list_jsonXML);
+
+      let xmlTemplateFile = "";
+      let renderer = render.create();
+
+      if (lang == "th") {
+        xmlTemplateFile = file.load("./report_inv_th.xml");
+      } else {
+        // xmlTemplateFile = file.load("./report_moveout_eng.xml");
+        xmlTemplateFile = file.load("./report_inv_th.xml");
+      }
+
+      renderer.templateContent = xmlTemplateFile.getContents();
+
+      renderer.addCustomDataSource({
+        format: render.DataSource.JSON,
+        alias: "JSON_STR",
+        data: JSON.stringify({
+          item: list_jsonXML,
+          font_regular: normal,
+          font_bold: bold,
+          font_ita: ita,
+          font_itabold: itabold,
+          copy: list_copy,
+        }),
       });
+
+      let xmlfile = renderer.renderAsPdf();
+      // log.debug("xmlfile", xmlfile);
+      response.writeFile(xmlfile, true);
+    } catch (error) {
+      log.debug("error onRequest", error);
     }
-
-    // log.debug("jsonXML", jsonXML);
-
-    log.debug("list_jsonXML", list_jsonXML);
-
-    let xmlTemplateFile = "";
-    let renderer = render.create();
-
-    if (lang == "th") {
-      xmlTemplateFile = file.load("./report_inv_th.xml");
-    } else {
-      // xmlTemplateFile = file.load("./report_moveout_eng.xml");
-      xmlTemplateFile = file.load("./report_inv_th.xml");
-    }
-
-    renderer.templateContent = xmlTemplateFile.getContents();
-
-    renderer.addCustomDataSource({
-      format: render.DataSource.JSON,
-      alias: "JSON_STR",
-      data: JSON.stringify({
-        item: list_jsonXML,
-        font_regular: normal,
-        font_bold: bold,
-        font_ita: ita,
-        font_itabold: itabold,
-        copy: list_copy,
-      }),
-    });
-
-    let xmlfile = renderer.renderAsPdf();
-    // log.debug("xmlfile", xmlfile);
-    response.writeFile(xmlfile, true);
-    // } catch (error) {
-    //   log.debug("error catch", error);
-    // }
   }
 
   function searchCustomerAddress(obj) {
