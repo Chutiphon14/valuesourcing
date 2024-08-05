@@ -42,7 +42,7 @@
                         z-index: 0;
                         top: -3cm;
                         left: -5cm;
-                        background-color: #E8EFCF;
+                        background-color: #64af48;
                         border: none;
                         width: 5cm;
                         height: 5cm;
@@ -201,7 +201,7 @@
                                         <td>ครบกำหนด : ${items.customer_duedate}</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2">เลขที่ใบสั่งซื้อ :
+                                        <td colspan="2">เลขที่ใบสั่งขาย :
                                             ${items.customer_createdfrom}</td>
                                     </tr>
                                     <tr>
@@ -461,7 +461,7 @@
                                 </span>
                             </td>
                             <td width="33%"
-                                style="" align="center"
+                                style="padding-bottom:24px;" align="center"
                             >
                                 ${items.legalname}</td>
                         </tr>
@@ -491,7 +491,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td width="34%" style="border-right:0.5px;" vertical-align="bottom">
+                            <td width="34%" style="border-right:0.5px;padding-top:24px;" vertical-align="bottom">
                                 &nbsp;_______________________&nbsp;&nbsp;___/___/___
                             </td>
                             <td width="33%"

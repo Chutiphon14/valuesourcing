@@ -143,11 +143,18 @@ define([
             isDynamic: true,
           });
 
-          const taxBranchNumberRecord = record.load({
-            type: "customrecord_csegtaxbranch",
-            id: invoiceRecord.getValue("csegtaxbranch") || "404",
-            isDynamic: true,
-          }) || '';
+          let taxbranchId = "404";
+
+          if (runtime.accountId.toLowerCase().replace("_", "-") != "2795756") {
+            folderId = "1";
+          }
+
+          const taxBranchNumberRecord =
+            record.load({
+              type: "customrecord_csegtaxbranch",
+              id: invoiceRecord.getValue("csegtaxbranch") || taxbranchId,
+              isDynamic: true,
+            }) || "";
 
           const customerRecord = record.load({
             type: "customer",
@@ -264,8 +271,17 @@ define([
               "custbody_inpth_tax_branch_number"
             );
           } else {
+            log.debug("sdas", invoiceRecord.getText("billaddressee"));
+            log.debug(
+              "sdas billaddress",
+              invoiceRecord.getValue("billaddress")
+            );
+
             jsonXML.customer_head = false;
-            jsonXML.customer_head_name = resultCustomerAddress[0]?.addressee;
+            // jsonXML.customer_head_name = resultCustomerAddress[0]?.addressee;
+            jsonXML.customer_head_name = invoiceRecord.getValue(
+              "custbody_rpt_billtoselect"
+            );
           }
 
           jsonXML.customer_po = invoiceRecord.getText("otherrefnum");
@@ -327,6 +343,15 @@ define([
             });
 
             jsonXML.gross_amount += parseFloat(
+              invoiceRecord.getSublistValue({
+                sublistId: "item",
+                fieldId: "amount",
+                line: index,
+              })
+            );
+
+            log.debug(
+              "amount",
               invoiceRecord.getSublistText({
                 sublistId: "item",
                 fieldId: "amount",
@@ -335,7 +360,7 @@ define([
             );
 
             jsonXML.vat += parseFloat(
-              invoiceRecord.getSublistText({
+              invoiceRecord.getSublistValue({
                 sublistId: "item",
                 fieldId: "tax1amt",
                 line: index,
@@ -367,7 +392,7 @@ define([
           jsonXML.total = formatNumberWithoutToLocaleString(jsonXML.total);
 
           jsonXML.remark = invoiceRecord.getText("custbody_vsc_ar_inv_remark");
-          jsonXML.total_text = BAHTTEXT(jsonXML.gross_amount);
+          jsonXML.total_text = BAHTTEXT(jsonXML.total);
 
           // jsonXML.vat_rate = formatNumber(jsonXML.vat_rate);
 

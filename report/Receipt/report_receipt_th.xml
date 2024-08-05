@@ -119,8 +119,9 @@
                                 </tr>
                                 <tr>
                                     <td style="width:50%;">
-                                        <span class="number"> โทร : ${items.phone} อีเมล :
-                                            ${items.email}</span>
+                                        <span class="number"> โทร : ${items.phone} </span>
+                                        <br />
+                                        <span>อีเมล : ${items.email}</span>
                                     </td>
                                     <td style="width:30%;">
 
@@ -269,7 +270,7 @@
                                         <td colspan="2">
                                             <table>
                                                 <tr>
-                                                    <td>เลขที่ใบสั่งซื้อ</td>
+                                                    <td>เลขที่ใบสั่งขาย</td>
                                                     <td rowspan="2" style="vertical-align: middle;">
                                                         ${items.customer_createdfrom}
                                                     </td>
@@ -334,25 +335,26 @@
                         border="0.5px 1px 0.5px 1px"
                         margin-top="6px">
                         <tr>
-                            <th width="5%" align="center"
+                            <th width="5%" padding="10px 0px 0px 0px" align="center"
                                 style="line-height:16px;border-right:0.5px;">
                                 ลำดับ</th>
-                            <th width="45%" align="center"
+                            <th width="45%" padding="10px 0px 0px 0px" align="center"
                                 style="line-height:16px;border-right:0.5px;">รหัสสินค้า
                                 / รายละเอียดสินค้า</th>
-                            <th width="8%" align="center"
+                            <th width="8%" padding="10px 0px 0px 0px" align="center"
                                 style="line-height:16px;border-right:0.5px;">
                                 คลัง</th>
-                            <th width="12%" colspan="2" align="center"
+                            <th width="12%" padding="10px 0px 0px 0px" colspan="2" align="center"
                                 style="line-height:16px;border-right:0.5px;">
                                 จำนวน</th>
-                            <th width="8%" align="center"
+                            <th width="8%" padding="10px 0px 0px 0px" align="center"
                                 style="line-height:16px;border-right:0.5px;">
                                 หน่วยละ</th>
-                            <th width="8%" align="center"
+                            <th width="8%" padding="10px 0px 0px 0px" align="center"
                                 style="line-height:16px;border-right:0.5px;">
                                 ส่วนลด</th>
-                            <th width="14%" align="center" style="line-height:16px;">
+                            <th width="14%" padding="10px 0px 0px 0px" align="center"
+                                style="line-height:16px;">
                                 จำนวนเงิน</th>
                         </tr>
                         <tr style="border-bottom:0.5px;">
@@ -369,8 +371,7 @@
                                 style="line-height:16px;border-right:0.5px;">
                                 Quantity </th>
                             <th width="8%" align="center"
-                                style="line-height:16px;border-right:0.5px;">Units
-                                Price</th>
+                                style="line-height:16px;border-right:0.5px;">Units <br /> Price</th>
                             <th width="8%" align="center"
                                 style="line-height:16px;border-right:0.5px;">
                                 Discount</th>
@@ -397,7 +398,7 @@
                         </#list>
 
                         <tr style="border-top:0.5px;">
-                            <th width="66%" style="border-right:0.5px;" colspan="4" rowspan="8">
+                            <th width="66%" style="border-right:0.5px;" colspan="4" rowspan="7">
                                 ${items.remark}
                             </th>
                             <th width="22%" vertical-align="bottom"
@@ -443,15 +444,20 @@
                                 style="">${items.vat}</th>
                         </tr>
                         <tr>
+                            <th width="66%" style="border-right:0.5px;" colspan="4"
+                                vertical-align="bottom"
+                                align="center">
+                                <span font-size="5">ผิด ตก ยกเว้น E.&amp;O.E.</span>
+                            </th>
                             <th width="22%" vertical-align="bottom"
                                 style="border-right:0.5px solid;line-height:14px;" colspan="3">
-                                VAT</th>
+                                ${items.vat_rate}% VAT</th>
                         </tr>
                         <tr>
                             <th width="66%" style="border-right:0.5px;border-top:0.5px;" colspan="4"
                                 vertical-align="middle"
                                 align="center" rowspan="2">
-                                (${items.total_text}).
+                                (${items.total_text})
                             </th>
                             <th width="22%" vertical-align="bottom"
                                 style="border-right:0.5px solid;line-height:14px;" colspan="3">
@@ -543,15 +549,16 @@
             </table> -->
 
                     <table width="100%" height="100%" corner-radius="5px"
-                        border="0.5px 1px 0.5px 1px"
+                        border="1px 1px 1px 1px"
                         margin-top="6px">
                         <tr>
-                            <td width="34%" style="border-right:0.5px;line-height:12px;"
+                            <td padding="10px 5px" width="34%"
+                                style="border-right:0.5px;line-height:12px;"
                                 align="center">
                                 ได้รับสินค้าตามรายการถูกต้องแล้ว
                             </td>
                             <td width="33%"
-                                style="border-right:0.5px solid;">
+                                style="border-right:0.5px solid;" padding="10px 5px">
                                 <table width="100%">
                                     <tr>
                                         <td width="33%" align="center">
@@ -568,7 +575,7 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td width="33%" style="">
+                            <td width="33%" style="" padding="10px 5px">
                                 ในนาม
                             </td>
                         </tr>
@@ -590,7 +597,7 @@
                                 </table>
                             </td>
                             <td width="33%"
-                                style="" align="center"
+                                style="padding-bottom:24px;" align="center"
                             >
                                 ${items.legalname}</td>
                         </tr>
@@ -652,7 +659,7 @@
                                 </table>
                             </td>
                             <td width="33%"
-                                style="" vertical-align="bottom"
+                                style="padding-top:24px;" vertical-align="bottom"
                             >
                                 _________________________________
                             </td>

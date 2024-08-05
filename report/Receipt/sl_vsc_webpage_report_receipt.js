@@ -128,9 +128,15 @@ define([
           isDynamic: true,
         });
 
+        let taxbranchId = "404";
+
+        if (runtime.accountId.toLowerCase().replace("_", "-") != "2795756") {
+          folderId = "1";
+        }
+
         const taxBranchNumberRecord = record.load({
           type: "customrecord_csegtaxbranch",
-          id: invoiceRecord.getValue("csegtaxbranch") || "404",
+          id: invoiceRecord.getValue("csegtaxbranch") || taxbranchId,
           isDynamic: true,
         });
 
@@ -234,7 +240,10 @@ define([
           );
         } else {
           jsonXML.customer_head = false;
-          jsonXML.customer_head_name = resultCustomerAddress[0]?.addressee;
+          // jsonXML.customer_head_name = resultCustomerAddress[0]?.addressee;
+          jsonXML.customer_head_name = invoiceRecord.getValue(
+            "custbody_rpt_billtoselect"
+          );
         }
 
         jsonXML.customer_po = invoiceRecord.getText("otherrefnum");
@@ -295,7 +304,7 @@ define([
           });
 
           jsonXML.gross_amount += parseFloat(
-            invoiceRecord.getSublistText({
+            invoiceRecord.getSublistValue({
               sublistId: "item",
               fieldId: "amount",
               line: index,
@@ -303,7 +312,7 @@ define([
           );
 
           jsonXML.vat += parseFloat(
-            invoiceRecord.getSublistText({
+            invoiceRecord.getSublistValue({
               sublistId: "item",
               fieldId: "tax1amt",
               line: index,
@@ -327,7 +336,7 @@ define([
         jsonXML.total = formatNumberWithoutToLocaleString(jsonXML.total);
 
         jsonXML.remark = invoiceRecord.getText("custbody_vsc_ar_inv_remark");
-        jsonXML.total_text = BAHTTEXT(jsonXML.gross_amount);
+        jsonXML.total_text = BAHTTEXT(jsonXML.total);
 
         list_jsonXML.push(jsonXML);
       });
@@ -722,6 +731,35 @@ define([
         }
       }
     }
+  }
+
+  function formatNumberWithoutToLocaleString(number) {
+    // แยกเลขจำนวนด้วย comma
+    let numberReturn = 0;
+    log.debug("number", number);
+
+    var parts = number.toString().split(".");
+    log.debug("parts", parts);
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    // // เพิ่มจุดทศนิยมถ้ามี
+    // if (parts.length === 1) {
+    //   parts.push("00"); // ถ้าไม่มีจุดทศนิยมให้เพิ่ม .00
+    // } else if (parts[1].length === 1) {
+    //   parts[1] += "0"; // ถ้ามีจุดทศนิยมแค่หลักเดียวให้เพิ่ม 0 ที่หลักทศนิยมสอง
+    // }
+
+    // สร้างทศนิยมเพียง 2 ตำแหน่ง
+    if (parts.length === 1) {
+      parts.push("00"); // ถ้าไม่มีจุดทศนิยมให้เพิ่ม .00
+    } else {
+      parts[1] =
+        parts[1].length > 1 ? parts[1].substring(0, 2) : parts[1] + "0"; // ถ้ามีทศนิยมแค่หลักเดียวให้เพิ่ม 0 ที่หลักทศนิยมสอง
+    }
+
+    numberReturn = parts.join(".");
+
+    return numberReturn;
   }
 
   return {
