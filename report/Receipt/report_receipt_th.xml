@@ -597,9 +597,15 @@
                                 </table>
                             </td>
                             <td width="33%"
-                                style="padding-bottom:24px;" align="center"
-                            >
-                                ${items.legalname}</td>
+                                style="" align="center"
+                            > ${items.legalname} <br />
+                            
+                                <#if items.signature != ''>
+                                    <img src="${items.signature?replace('&','&amp;')}"
+                                        style="float: left; width: auto; height: 50px;" />
+                                </#if>
+
+                            </td>
                         </tr>
                         <tr>
                             <td width="34%" style="border-right:0.5px;" vertical-align="bottom">

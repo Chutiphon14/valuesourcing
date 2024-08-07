@@ -180,6 +180,21 @@ define([
           }
 
           if (taxBranchNumberRecord || "") {
+            const signimageId = taxBranchNumberRecord.getValue(
+              "custrecord_inpth_signature"
+            );
+
+            if (signimageId.length > 0) {
+              var fileObj = file.load({
+                id: signimageId,
+              });
+
+              jsonXML.signature =
+                `https://${instance_url}.app.netsuite.com` + fileObj.url;
+            } else {
+              jsonXML.signature = "";
+            }
+
             jsonXML.legalname = taxBranchNumberRecord.getValue(
               "custrecord_inpth_taxlegalname"
             );
@@ -320,11 +335,14 @@ define([
                 fieldId: "item",
                 line: index,
               }),
-              quantity: `${invoiceRecord.getSublistValue({
-                sublistId: "item",
-                fieldId: "quantity",
-                line: index,
-              })} ${invoiceRecord.getSublistText({
+              quantity: `${formatNumberWithoutToLocaleString(
+                invoiceRecord.getSublistValue({
+                  sublistId: "item",
+                  fieldId: "quantity",
+                  line: index,
+                }),
+                true
+              )} ${invoiceRecord.getSublistText({
                 sublistId: "item",
                 fieldId: "units",
                 line: index,
@@ -791,7 +809,7 @@ define([
     }
   }
 
-  function formatNumberWithoutToLocaleString(number) {
+  function formatNumberWithoutToLocaleString(number, isInt = false) {
     // แยกเลขจำนวนด้วย comma
     let numberReturn = 0;
     log.debug("number", number);
@@ -808,16 +826,20 @@ define([
     // }
 
     // สร้างทศนิยมเพียง 2 ตำแหน่ง
-    if (parts.length === 1) {
-      parts.push("00"); // ถ้าไม่มีจุดทศนิยมให้เพิ่ม .00
+    if (isInt) {
+      return parts[0];
     } else {
-      parts[1] =
-        parts[1].length > 1 ? parts[1].substring(0, 2) : parts[1] + "0"; // ถ้ามีทศนิยมแค่หลักเดียวให้เพิ่ม 0 ที่หลักทศนิยมสอง
+      if (parts.length === 1) {
+        parts.push("00"); // ถ้าไม่มีจุดทศนิยมให้เพิ่ม .00
+      } else {
+        parts[1] =
+          parts[1].length > 1 ? parts[1].substring(0, 2) : parts[1] + "0"; // ถ้ามีทศนิยมแค่หลักเดียวให้เพิ่ม 0 ที่หลักทศนิยมสอง
+      }
+
+      numberReturn = parts.join(".");
+
+      return numberReturn;
     }
-
-    numberReturn = parts.join(".");
-
-    return numberReturn;
   }
 
   function formatNumber(num) {

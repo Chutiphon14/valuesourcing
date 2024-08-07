@@ -57,7 +57,7 @@
                         z-index: 0;
                         top: -3cm;
                         left: -5cm;
-                        background-color: #F1EF99;
+                        background-color: #64af48;
                         border: none;
                         width: 5cm;
                         height: 5cm;
@@ -439,10 +439,17 @@
                                 ได้รับสินค้าตามรายการถูกต้องแล้ว
                             </td>
                             <td width="33%" padding-top="10px"
-                                style="border-right:0.5px solid;">
-                                <span style="font-size:9px;line-height:12px;">
+                                style="border-right:0.5px solid;" rowspan="6">
+                                <p style="font-size:9px;line-height:12px;">
                                     ๐ สินค้านี้ขายขาดไม่รับคืนหรือเปลี่ยน
-                                </span>
+                                </p>
+                                <p style="font-size:9px;line-height:12px;">
+                                    ๐ บริษัทฯ จะนำใบเสร็จรับเงินมาเรียกเก็บเงินในภายหลัง
+                                </p>
+                                <p style="font-size:9px;line-height:12px;"> ๐ บริษัทฯ จะคิดดอกเบี้ย
+                                    1.25% ต่อเดือนเมื่อชำระบิล <br />เกินกำหนด </p>
+                                <p style="font-size:9px;line-height:12px;"> ๐ กรุณาชำระเงินด้วยเช็ค
+                                    ในนามบริษัทฯขีดผู้ถือและ<br /> ขีดคล่อมเท่านั้น </p>
                             </td>
                             <td width="33%"
                                 style=""
@@ -454,26 +461,32 @@
                             <td width="34%" vertical-align="bottom" style="border-right:0.5px;">
 
                             </td>
-                            <td width="33%"
+                            <!-- <td width="33%"
                                 style="border-right:0.5px solid;">
                                 <span style="font-size:9px;line-height:12px;">
                                     ๐ บริษัทฯ จะนำใบเสร็จรับเงินมาเรียกเก็บเงินในภายหลัง
                                 </span>
-                            </td>
+                            </td> -->
                             <td width="33%"
-                                style="padding-bottom:24px;" align="center"
-                            >
-                                ${items.legalname}</td>
+                                style="" align="center"
+                            > ${items.legalname} <br />
+                            
+                                <#if items.signature != ''>
+                                    <img src="${items.signature?replace('&','&amp;')}"
+                                        style="float: left; width: auto; height: 50px;" />
+                                </#if>
+                            </td>
+
                         </tr>
                         <tr>
                             <td width="34%" style="border-right:0.5px;" vertical-align="bottom">
                                 &nbsp;_______________________&nbsp;&nbsp;___/___/___
                             </td>
-                            <td width="33%"
+                            <!-- <td width="33%"
                                 style="border-right:0.5px solid;" rowspan='2'>
                                 <span style="font-size:9px;line-height:12px;"> ๐ บริษัทฯ
                                     จะคิดดอกเบี้ย 1.25% ต่อเดือนเมื่อชำระบิล <br />เกินกำหนด </span>
-                            </td>
+                            </td> -->
                             <td width="33%"
                                 style="" vertical-align="bottom"
                             >
@@ -491,15 +504,16 @@
                             </td>
                         </tr>
                         <tr>
-                            <td width="34%" style="border-right:0.5px;padding-top:24px;" vertical-align="bottom">
+                            <td width="34%" style="border-right:0.5px;padding-top:24px;"
+                                vertical-align="bottom">
                                 &nbsp;_______________________&nbsp;&nbsp;___/___/___
                             </td>
-                            <td width="33%"
+                            <!-- <td width="33%"
                                 style="border-right:0.5px solid;" rowspan='2'>
                                 <span style="font-size:9px;line-height:12px;"> ๐
                                     กรุณาชำระเงินด้วยเช็ค ในนามบริษัทฯขีดผู้ถือและ<br />
                                     ขีดคล่อมเท่านั้น </span>
-                            </td>
+                            </td> -->
                             <td width="33%"
                                 style="" vertical-align="bottom"
                             >
