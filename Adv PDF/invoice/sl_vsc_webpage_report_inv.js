@@ -255,7 +255,7 @@ define([
           ) {
             jsonXML.customer_address = `${invoiceRecord.getValue(
               "custbody_inpth_customer_address1"
-            )} ${invoiceRecord.getValue(
+            )} <br/> ${invoiceRecord.getValue(
               "custbody_inpth_customer_address2"
             )} ${invoiceRecord.getValue("custbody_inpth_zip_code")}`;
           } else {
@@ -312,7 +312,17 @@ define([
             jsonXML.customer_createdfrom = invoiceRecord.getText("createdfrom");
           }
 
-          jsonXML.customer_salesrep = invoiceRecord.getText("salesrep");
+          if (invoiceRecord.getText("salesrep")) {
+            var employeeName = search.lookupFields({
+              type: "employee",
+              id: invoiceRecord.getValue("salesrep"),
+              columns: ["altname"],
+            });
+            jsonXML.customer_salesrep = employeeName.altname;
+          } else {
+            jsonXML.customer_salesrep = "";
+          }
+
           jsonXML.customer_shiptoselect = invoiceRecord.getValue(
             "custbody_rpt_shiptoselect"
           );
@@ -688,7 +698,7 @@ define([
           address: `${e.getValue({
             name: "billaddress1",
             label: "Billing Address 1",
-          })} ${e.getValue({
+          })} <br/> ${e.getValue({
             name: "billaddress2",
             label: "Billing Address 2",
           })} ${e.getValue({

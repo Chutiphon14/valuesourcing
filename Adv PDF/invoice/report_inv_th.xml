@@ -95,7 +95,7 @@
                         <macro id="nlheader">
                             <table class="header" style="width: 100%;">
                                 <tr>
-                                    <td>
+                                    <td margin-bottom="">
                                         <#if items.logo != ''>
                                             <img src="${items.logo?replace('&','&amp;')}"
                                                 style="float: left; width: 150px; height: 100px;" />
@@ -121,7 +121,8 @@
                                 </tr>
                                 <tr>
                                     <td align="left" colspan="2">
-                                        <span class="number">${items.address_tax}</span>
+                                        <span class="number" style="line-height:12;">
+                                            ${items.address_tax}</span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -129,12 +130,9 @@
                                         ${items.email}</td>
                                 </tr>
                                 <tr>
-                                    <td align="left" colspan="2">เลขที่ประจำตัวผู้เสียภาษี :
+                                    <td align="left">เลขที่ประจำตัวผู้เสียภาษี :
                                         ${items.taxid}
                                         สาขาที่ : ${items.branchcode}</td>
-                                </tr>
-                                <tr>
-                                    <td></td>
                                     <td align="center">
                                         <b>
                                             ${docs.form}
@@ -154,7 +152,7 @@
             </macrolist> -->
 
                 </head>
-                <body header="nlheader" header-height="19%" footer="nlfooter" footer-height="20pt"
+                <body header="nlheader" header-height="18%" footer="nlfooter" footer-height="20pt"
                     padding="0.5in 0.5in 0.5in 0.5in" size="A4">
                     <table style="width: 100%; margin-top: 10px;">
                         <tr>
@@ -167,7 +165,8 @@
                                         <td colspan="2">บริษัท : ${items.customercompany}</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2">ที่อยู่ : ${items.customer_address}</td>
+                                        <td colspan="2" style="line-height:12;">ที่อยู่ :
+                                            ${items.customer_address}</td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">โทรศัพท์/Tel. ${items.customer_phone} FAX:
